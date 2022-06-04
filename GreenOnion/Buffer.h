@@ -25,9 +25,12 @@ namespace greenonion::system
 			memcpy_s(m_buffer, m_capacity, buffer.m_buffer, m_offset);
 		}
 
-		Buffer(const Buffer&& buffer)
+		Buffer(Buffer&& buffer):
+		m_buffer(buffer.m_buffer), m_capacity(buffer.m_capacity), m_offset(buffer.m_offset)
 		{
-			
+			buffer.m_buffer = nullptr;
+			buffer.m_offset = 0;
+			buffer.m_capacity = 0;
 		}
 
 	public:
