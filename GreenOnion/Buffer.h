@@ -51,7 +51,7 @@ namespace greenonion::system
 				}
 			}catch (std::exception ex)
 			{
-				
+				printf_s("buffer delete error : %s", ex.what());
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace greenonion::system
 			m_capacity = new_size;
 		}
 
-		Buffer& operator +(Buffer& buffer)
+		Buffer operator +(Buffer& buffer)
 		{
 			//new data
 			size_t new_size = m_capacity + buffer.m_capacity;
@@ -94,13 +94,11 @@ namespace greenonion::system
 			return_buffer.m_offset = new_offset;
 			return return_buffer;
 		}
-
+	public:
 		//write
-		void operator << (Buffer& buffer)
-		{
-			
-		}
 
+
+		
 
 	public:
 		constexpr static size_t DEFAULT_SIZE = 1024;
@@ -128,11 +126,11 @@ namespace greenonion::system
 		}
 
 
-		void Test()
+		void Test(char a)
 		{
 			for (int i = 0; i < m_capacity; i++)
 			{
-				m_buffer[i] = '99';
+				m_buffer[i] = a;
 			}
 		}
 
