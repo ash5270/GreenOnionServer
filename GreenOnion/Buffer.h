@@ -96,8 +96,68 @@ namespace greenonion::system
 		}
 	public:
 		//write
+		void push_back(const uint8_t* data, const size_t& size)
+		{
+			WriteData(data, size);
+		}
 
+		void push_back(const std::string& string)
+		{
+			//문자열 길이
+			const uint16_t size_len =static_cast<uint16_t>(string.size());
+			//문자열 길이를 받을 uint16_t의 사이즈
+			const uint16_t size = sizeof(uint16_t);
+			if(WriteData(size))
+			{
+				WriteData(string.c_str(), size);
+			}
+		}
 
+		//write
+		void push_back(const uint8_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const uint16_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const uint32_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const uint64_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const int8_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const int16_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const int32_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const int64_t& data)
+		{
+			WriteData(data);
+		}
+
+		void push_back(const bool& data)
+		{
+			WriteData(data);
+		}
 		
 
 	public:
@@ -125,13 +185,49 @@ namespace greenonion::system
 			new_buffer = nullptr;
 		}
 
-
-		void Test(char a)
+		void SetOffset(const size_t& offset)
 		{
-			for (int i = 0; i < m_capacity; i++)
-			{
-				m_buffer[i] = a;
-			}
+			this->m_offset = offset;
+		}
+
+		uint8_t* GetBuffer() const
+		{
+			return m_buffer;
+		}
+
+		size_t GetBufferSize() const
+		{
+			return m_capacity;
+		}
+
+		size_t GetSize() const
+		{
+			return m_offset;
+		}
+
+	
+
+	private:
+		template<typename T>
+		bool WriteData(const T& data)
+		{
+			size_t size = sizeof(T);
+			const char* data_ptr = reinterpret_cast<const char*>(&data);
+			if(m_offset+size> m_capacity)
+				return false;
+			memcpy_s(m_buffer + m_offset, size, data_ptr, size);
+			m_offset += size;
+			return true;
+		}
+
+		template<typename T>
+		bool WriteData(const T* data,const size_t& size)
+		{
+			if(m_offset+size>m_capacity)
+				return false;
+			memcpy_s(m_buffer + m_offset, size, data, size);
+			m_offset += size;
+			return  true;
 		}
 
 	private:
@@ -140,4 +236,4 @@ namespace greenonion::system
 		size_t m_capacity;
 		size_t m_offset;
 	};
-}
+} 

@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "Server.h"
+
+
 namespace greenonion::system
 {
 	class Application
@@ -12,7 +14,6 @@ namespace greenonion::system
 		void UpdateApp();
 		void StopApp();
 		void ExitApp();
-
 
 	private:
 		network::Server m_server;

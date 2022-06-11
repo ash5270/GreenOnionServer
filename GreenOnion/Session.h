@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CommonHeader.h"
+#include "Buffer.h"
 #include <memory>
 
 using namespace boost;
@@ -26,7 +27,8 @@ namespace greenonion::system::network
 		boost::asio::io_context& m_context;
 
 		asio::ip::tcp::endpoint m_endpoint;
-
+		Buffer* read_buffer;
+		Buffer* send_buffer;
 
 	};
 }

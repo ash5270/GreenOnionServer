@@ -19,6 +19,9 @@
     <Filter Include="소스 파일\System\Network">
       <UniqueIdentifier>{a5826abd-c023-4044-90c5-5dec9b9d73ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\System\Service">
+      <UniqueIdentifier>{f24aade5-3ed4-4f85-9a4c-136ed4299b84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -35,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="Session.cpp">
       <Filter>소스 파일\System\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="LogSystem.cpp">
+      <Filter>소스 파일\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +60,15 @@
       <Filter>소스 파일\System\Network</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
+      <Filter>소스 파일\System</Filter>
+    </ClInclude>
+    <ClInclude Include="LogSystem.h">
+      <Filter>소스 파일\System</Filter>
+    </ClInclude>
+    <ClInclude Include="LogData.h">
+      <Filter>소스 파일\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
       <Filter>소스 파일\System</Filter>
     </ClInclude>
   </ItemGroup>

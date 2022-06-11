@@ -3,10 +3,13 @@
 #include <memory>
 #include <boost/bind.hpp>
 
+#include "LogSystem.h"
+
 
 greenonion::system::network::Server::Server(UINT port):
 	m_acceptorThread(0),m_IoContext(1)
 {
+	GO_LOG(LOGLEVEL::LOG_DEBUG, "Server Start...");
 	m_acceptor = new boost::asio::ip::tcp::acceptor(m_acceptorThread.GetContext(), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port));
 }
 
@@ -49,11 +52,11 @@ void greenonion::system::network::Server::AcceptorHandler(const boost::system::e
 {
 	if(!error)
 	{
-		printf_s("Connect to client");
+		GO_LOG(LOGLEVEL::LOG_DEBUG,"Connect to client");
 		ClientConnect(std::move(socket));
 	}else
 	{
-		printf_s("acceptor error ");
+		GO_LOG(LOGLEVEL::LOG_ERROR, "Connect error");
 	}
 	WaitForClientConnection();
 }
