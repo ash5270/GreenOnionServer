@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CommonHeader.h"
 #include "IOThread.h"
+#include "SessionManager.h"
 #include <list>
 
 
@@ -17,8 +18,6 @@ namespace greenonion::system::network
 		bool StopServer();
 		bool Update();
 
-
-
 	private:
 		//클라이언트 대기
 		void WaitForClientConnection();
@@ -29,8 +28,7 @@ namespace greenonion::system::network
 
 
 	private:
-		std::list <std::shared_ptr<class Session>> m_sessionInfos;
-		
+		SessionManager m_session_manager;
 		//acceptor 
 		boost::asio::ip::tcp::acceptor* m_acceptor;
 		//acceptor Thread

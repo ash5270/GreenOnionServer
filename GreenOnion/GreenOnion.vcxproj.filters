@@ -42,6 +42,12 @@
     <ClCompile Include="LogSystem.cpp">
       <Filter>소스 파일\System</Filter>
     </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>소스 파일\System\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferPool.cpp">
+      <Filter>소스 파일\System\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -70,6 +76,12 @@
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>소스 파일\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
+      <Filter>소스 파일\System\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferPool.h">
+      <Filter>소스 파일\System\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

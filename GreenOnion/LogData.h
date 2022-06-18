@@ -21,7 +21,7 @@ namespace greenonion::system
 			m_logData.append(m_time);
 			m_logData.append(" ");
 		}
-
+	
 	private:
 		LOGLEVEL m_logLevel;
 		std::string m_logData;

@@ -20,15 +20,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BufferPool.cpp" />
     <ClCompile Include="IOThread.cpp" />
     <ClCompile Include="LogSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Session.cpp" />
+    <ClCompile Include="SessionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="BufferPool.h" />
     <ClInclude Include="CommonHeader.h" />
     <ClInclude Include="IOThread.h" />
     <ClInclude Include="Log.h" />
@@ -36,6 +39,7 @@
     <ClInclude Include="LogSystem.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Session.h" />
+    <ClInclude Include="SessionManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

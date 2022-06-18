@@ -15,6 +15,7 @@ namespace greenonion::system
 	private:
 		LogSystem();
 
+
 	private:
 	
 		std::queue<LogData> m_logQueue;

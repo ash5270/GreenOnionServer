@@ -2,7 +2,7 @@
 #include"boost/asio.hpp"
 #include"LogSystem.h"
 greenonion::system::Application::Application()
-	:m_server(22)
+	:m_server(3000)
 {
 	
 }
@@ -22,7 +22,7 @@ void greenonion::system::Application::UpdateApp()
 {
 	while(true)
 	{
-
+		m_server.Update();
 	}
 }
 

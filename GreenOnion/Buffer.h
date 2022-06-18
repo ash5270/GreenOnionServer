@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <cstdint>
 #include <memory>
-
 namespace greenonion::system
 {
 	class Buffer
@@ -11,47 +10,56 @@ namespace greenonion::system
 		Buffer():
 		m_buffer(new uint8_t[DEFAULT_SIZE]),m_capacity(DEFAULT_SIZE),m_offset(0)
 		{
+			//printf_s("기본1 %p \n", m_buffer);
 			Clear();
 		}
 		//size 만큰 생성
 		Buffer(const size_t size):
 		m_buffer(new uint8_t[size]), m_capacity(size), m_offset(0)
 		{
+			//printf_s("기본2 %p \n", m_buffer);
 			Clear();
-		} 
+		}
+		//이동생성자
+		Buffer(Buffer&& buffer) noexcept :
+			m_buffer(buffer.m_buffer), m_capacity(buffer.m_capacity), m_offset(buffer.m_offset)
+		{
+		//	printf_s("이동 %p \n", m_buffer);
+			buffer.m_buffer = nullptr;
+			buffer.m_offset = 0;
+			buffer.m_capacity = 0;
+		}
 		//복사 생성자
 		Buffer(const Buffer& buffer):
 		m_buffer(new uint8_t[buffer.m_capacity]), m_capacity(buffer.m_capacity),m_offset(buffer.m_offset)
 		{
+			//printf_s("복사 %p \n", m_buffer);
 			memcpy_s(m_buffer, m_capacity, buffer.m_buffer, m_offset);
 		}
 		//포인트 생성자
 		Buffer(uint8_t* buffer,const size_t size):
 		m_buffer(buffer),m_capacity(size),m_offset(size)
 		{
-			
+			//printf_s("포인터 생성 %p \n", m_buffer);
 		}
-		//이동생성자
-		Buffer(Buffer&& buffer):
-		m_buffer(buffer.m_buffer), m_capacity(buffer.m_capacity), m_offset(buffer.m_offset)
-		{
-			buffer.m_buffer = nullptr;
-			buffer.m_offset = 0;
-			buffer.m_capacity = 0;
-		}
+		
 		//소멸자
 		~Buffer()
 		{
 			try
 			{
-				if(m_buffer!=nullptr)
+				if (m_buffer != nullptr)
 				{
+				//	printf_s("소멸자1 %p \n", m_buffer);
 					delete[] m_buffer;
 					m_buffer = nullptr;
+				}else
+				{
+					//printf_s("소멸자 try %p \n", m_buffer);
 				}
 			}catch (std::exception ex)
 			{
-				printf_s("buffer delete error : %s", ex.what());
+				//printf_s("buffer delete error : %s", ex.what());
 			}
 		}
 
@@ -154,10 +162,20 @@ namespace greenonion::system
 			WriteData(data);
 		}
 
+		void push_back(const Buffer& buffer)
+		{
+			if (m_offset + buffer.m_offset > m_capacity)
+				return;
+
+			memcpy_s(m_buffer+m_offset, buffer.GetSize(), buffer.GetBuffer(), buffer.GetSize());
+			m_offset += buffer.GetSize();
+		}
+
 		void push_back(const bool& data)
 		{
 			WriteData(data);
 		}
+
 		
 
 	public:
