@@ -1,7 +1,11 @@
 ﻿#pragma once
+#include "Buffer.h"
 
-class BufferPool
+namespace greenonion::system
 {
-public:
-	
-};
+	class BufferPool
+	{
+	public:
+
+	};
+}

@@ -46,7 +46,7 @@
       <Filter>소스 파일\System\Network</Filter>
     </ClCompile>
     <ClCompile Include="BufferPool.cpp">
-      <Filter>소스 파일\System\Network</Filter>
+      <Filter>소스 파일\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +81,7 @@
       <Filter>소스 파일\System\Network</Filter>
     </ClInclude>
     <ClInclude Include="BufferPool.h">
-      <Filter>소스 파일\System\Network</Filter>
+      <Filter>소스 파일\System</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

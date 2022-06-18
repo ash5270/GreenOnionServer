@@ -8,7 +8,7 @@
 
 namespace greenonion::system
 {
-	#define GO_LOG(log_level,...) LogSystem::Instance().LogAppend(CreateLogData(log_level,##__VA_ARGS__))
+	#define GO_LOG(log_level,...) //LogSystem::Instance().LogAppend(CreateLogData(log_level,##__VA_ARGS__))
 
 	class LogSystem
 	{

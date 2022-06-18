@@ -14,7 +14,7 @@ void greenonion::system::LogSystem::InitSystem()
 
 void greenonion::system::LogSystem::StartSystem()
 {
-	m_logThead = std::thread(&LogSystem::UpdateSystem,this);
+	//m_logThead = std::thread(&LogSystem::UpdateSystem,this);
 }
 
 void greenonion::system::LogSystem::UpdateSystem()

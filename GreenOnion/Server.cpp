@@ -49,7 +49,6 @@ bool greenonion::system::network::Server::Update()
 		m_session_manager.SendAllSession(std::move(buffer));
 	}
 
-
 	return true;
 }
 

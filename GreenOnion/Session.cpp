@@ -82,10 +82,11 @@ void greenonion::system::network::Session::RecvHandler(boost::system::error_code
 
 void greenonion::system::network::Session::Send(Buffer&& buffer)
 {
+	send_buffer->push_back(buffer);
 	//캡쳐 
 	m_context.post([this, buffer]()
 		{
-			SendData(buffer);
+			SendData();
 		});
 }
 
@@ -97,10 +98,9 @@ void greenonion::system::network::Session::Send(Buffer&& buffer)
 //		});
 //}
 
-void greenonion::system::network::Session::SendData(Buffer buffer)
+void greenonion::system::network::Session::SendData()
 {
-	//GO_LOG(LOGLEVEL::LOG_DEBUG, "SendData");
-	m_socket.async_write_some(asio::buffer(buffer.GetBuffer(), buffer.GetSize()),
+	m_socket.async_send(asio::buffer(send_buffer->GetBuffer(), send_buffer->GetSize()),
 		boost::bind(&Session::SendHandler, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
@@ -109,6 +109,7 @@ void greenonion::system::network::Session::SendHandler(boost::system::error_code
 	if(!ec)
 	{
 		//GO_LOG(LOGLEVEL::LOG_DEBUG, "Send Success, transferred : ", transferred);
+		send_buffer->Clear();
 	}
 	else
 	{

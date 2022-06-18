@@ -28,7 +28,7 @@ namespace greenonion::system::network
 	private:
 		void RecvData();
 		void RecvHandler(boost::system::error_code ec, size_t transferred);
-		void SendData(Buffer buffer);
+		void SendData();
 		void SendHandler(boost::system::error_code ec, size_t transferred);
 		
 	private:
