@@ -51,7 +51,7 @@ namespace greenonion::system
 			{
 				if (m_buffer != nullptr)
 				{
-				//	printf_s("소멸자1 %p \n", m_buffer);
+					//printf_s("소멸자1 %p \n", m_buffer);
 					delete[] m_buffer;
 					m_buffer = nullptr;
 				}else
