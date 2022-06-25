@@ -9,21 +9,21 @@ namespace greenonion::system
 	public:
 		//기본 생성자 default construct
 		Buffer():
-		m_buffer(new uint8_t[DEFAULT_SIZE]),m_capacity(DEFAULT_SIZE),m_offset(0)
+		m_buffer(new uint8_t[DEFAULT_SIZE]),m_capacity(DEFAULT_SIZE),m_offset(0),m_readOffset(0)
 		{
 			//printf_s("기본1 %p \n", m_buffer);
 			Clear();
 		}
 		//size 만큰 생성
 		Buffer(const size_t size):
-		m_buffer(new uint8_t[size]), m_capacity(size), m_offset(0)
+		m_buffer(new uint8_t[size]), m_capacity(size), m_offset(0), m_readOffset(0)
 		{
 			//printf_s("기본2 %p \n", m_buffer);
 			Clear();
 		}
 		//이동생성자
 		Buffer(Buffer&& buffer) noexcept :
-			m_buffer(buffer.m_buffer), m_capacity(buffer.m_capacity), m_offset(buffer.m_offset)
+			m_buffer(buffer.m_buffer), m_capacity(buffer.m_capacity), m_offset(buffer.m_offset),m_readOffset(0)
 		{
 		//	printf_s("이동 %p \n", m_buffer);
 			buffer.m_buffer = nullptr;
@@ -32,20 +32,20 @@ namespace greenonion::system
 		}
 		//복사 생성자
 		Buffer(const Buffer& buffer):
-		m_buffer(new uint8_t[buffer.m_capacity]), m_capacity(buffer.m_capacity),m_offset(buffer.m_offset)
+		m_buffer(new uint8_t[buffer.m_capacity]), m_capacity(buffer.m_capacity),m_offset(buffer.m_offset),m_readOffset(0)
 		{
 			//printf_s("복사 %p \n", m_buffer);
 			memcpy_s(m_buffer, m_capacity, buffer.m_buffer, m_offset);
 		}
 		//포인트 생성자
 		Buffer(uint8_t* buffer,const size_t size):
-		m_buffer(buffer),m_capacity(size),m_offset(size)
+		m_buffer(buffer),m_capacity(size),m_offset(size),m_readOffset(0)
 		{
 			//printf_s("포인터 생성 %p \n", m_buffer);
 		}
 		
 		//소멸자
-		~Buffer()
+		virtual ~Buffer()
 		{
 			try
 			{
@@ -103,81 +103,6 @@ namespace greenonion::system
 			return_buffer.m_offset = new_offset;
 			return return_buffer;
 		}
-	public:
-		//write
-		void push_back(const uint8_t* data, const size_t& size)
-		{
-			WriteData(data, size);
-		}
-
-		void push_back(const std::string& string)
-		{
-			//문자열 길이
-			const uint16_t size_len =static_cast<uint16_t>(string.size());
-			//문자열 길이를 받을 uint16_t의 사이즈
-			const uint16_t size = sizeof(uint16_t);
-			if(WriteData(size))
-			{
-				WriteData(string.c_str(), size);
-			}
-		}
-
-		//write
-		void push_back(const uint8_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const uint16_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const uint32_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const uint64_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const int8_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const int16_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const int32_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const int64_t& data)
-		{
-			WriteData(data);
-		}
-
-		void push_back(const Buffer& buffer)
-		{
-			if (m_offset + buffer.m_offset > m_capacity)
-				return;
-
-			memcpy_s(m_buffer+m_offset, buffer.GetSize(), buffer.GetBuffer(), buffer.GetSize());
-			m_offset += buffer.GetSize();
-		}
-
-		void push_back(const bool& data)
-		{
-			WriteData(data);
-		}
-
-		
 
 	public:
 		constexpr static size_t DEFAULT_SIZE = 1024;
@@ -224,35 +149,50 @@ namespace greenonion::system
 			return m_offset;
 		}
 
-	
-
-	private:
-		template<typename T>
-		bool WriteData(const T& data)
+		size_t GetReadOffset() const
 		{
-			size_t size = sizeof(T);
-			const char* data_ptr = reinterpret_cast<const char*>(&data);
-			if(m_offset+size> m_capacity)
-				return false;
-			memcpy_s(m_buffer + m_offset, size, data_ptr, size);
-			m_offset += size;
-			return true;
+			return m_readOffset;
 		}
 
-		template<typename T>
-		bool WriteData(const T* data,const size_t& size)
+
+	public:
+		//write
+		virtual bool push_back(const uint8_t* data, const size_t& size)
 		{
-			if(m_offset+size>m_capacity)
+			return WriteData(data, size);
+		}
+		//read
+		virtual bool pop(uint8_t* data, const size_t& size)
+		{
+			return ReadData(data, size);
+		}
+
+	private:
+		bool WriteData(const uint8_t* data,const size_t& size)
+		{
+			if(m_offset+size>m_capacity||size<=0)
 				return false;
 			memcpy_s(m_buffer + m_offset, size, data, size);
 			m_offset += size;
 			return  true;
 		}
 
-	private:
+		bool ReadData(uint8_t* data, const size_t& size)
+		{
+			if (size <= 0|| m_offset<=0)
+				return false;
+			memcpy_s(data, size, m_buffer + m_readOffset, size);
+			m_readOffset += size;
+			m_offset -= size;
+			return true;
+		}
+		
+
+	protected:
 		uint8_t* m_buffer;
 
 		size_t m_capacity;
 		size_t m_offset;
+		size_t m_readOffset;
 	};
 } 

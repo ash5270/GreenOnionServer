@@ -14,7 +14,7 @@ void greenonion::system::LogSystem::InitSystem()
 
 void greenonion::system::LogSystem::StartSystem()
 {
-	//m_logThead = std::thread(&LogSystem::UpdateSystem,this);
+	m_logThead = std::thread(&LogSystem::UpdateSystem,this);
 }
 
 void greenonion::system::LogSystem::UpdateSystem()
@@ -23,9 +23,9 @@ void greenonion::system::LogSystem::UpdateSystem()
 	{
 		if(!m_logQueue.empty())
 		{
+			std::lock_guard<std::mutex> lock(m_mutex);
 			LogData log_string = m_logQueue.front();
 			m_logQueue.pop();
-
 			std::cout << log_string.to_string() << std::endl;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));

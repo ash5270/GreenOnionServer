@@ -22,6 +22,9 @@
     <Filter Include="소스 파일\System\Service">
       <UniqueIdentifier>{f24aade5-3ed4-4f85-9a4c-136ed4299b84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\System\Buffer">
+      <UniqueIdentifier>{be61d73f-2d45-4499-82f5-c308a4f618c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -46,7 +49,7 @@
       <Filter>소스 파일\System\Network</Filter>
     </ClCompile>
     <ClCompile Include="BufferPool.cpp">
-      <Filter>소스 파일\System</Filter>
+      <Filter>소스 파일\System\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,9 +68,6 @@
     <ClInclude Include="Session.h">
       <Filter>소스 파일\System\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>소스 파일\System</Filter>
-    </ClInclude>
     <ClInclude Include="LogSystem.h">
       <Filter>소스 파일\System</Filter>
     </ClInclude>
@@ -80,8 +80,17 @@
     <ClInclude Include="SessionManager.h">
       <Filter>소스 파일\System\Network</Filter>
     </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>소스 파일\System\Buffer</Filter>
+    </ClInclude>
     <ClInclude Include="BufferPool.h">
-      <Filter>소스 파일\System</Filter>
+      <Filter>소스 파일\System\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="CricularBuffer.h">
+      <Filter>소스 파일\System\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="NetWorkBuffer.h">
+      <Filter>소스 파일\System\Buffer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

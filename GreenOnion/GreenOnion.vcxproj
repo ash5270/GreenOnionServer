@@ -37,6 +37,8 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="LogData.h" />
     <ClInclude Include="LogSystem.h" />
+    <ClInclude Include="CricularBuffer.h" />
+    <ClInclude Include="NetWorkBuffer.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SessionManager.h" />

@@ -10,7 +10,7 @@ namespace greenonion::system::network
 	class SessionManager
 	{
 	public:
-		SessionManager();
+		SessionManager();  
 		~SessionManager();
 	public:
 		void AddSession(const std::shared_ptr<class Session>& session);

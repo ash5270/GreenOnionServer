@@ -2,6 +2,7 @@
 #include "CommonHeader.h"
 #include "IOThread.h"
 #include "SessionManager.h"
+
 #include <list>
 
 
@@ -26,7 +27,6 @@ namespace greenonion::system::network
 		//acceptor 콜백함수
 		void AcceptorHandler(const boost::system::error_code& error, boost::asio::ip::tcp::socket socket);
 
-
 	private:
 		SessionManager m_session_manager;
 		//acceptor 
@@ -35,6 +35,8 @@ namespace greenonion::system::network
 		IOThread m_acceptorThread;
 		IOThread m_IoContext;
 
+
+		int x = 0;
 	};
 
 }

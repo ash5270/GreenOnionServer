@@ -45,9 +45,42 @@ bool greenonion::system::network::Server::Update()
 	if (m_session_manager.GetSize() > 0)
 	{
 		Buffer buffer;
-		buffer.push_back(123);
+		x++;
+		int zx = x;
+		float z2 = 0.2f;
+		float z3 = 0.5f;
+		float z4 = 0.6f;
+		buffer.push_back((uint8_t*)&zx, sizeof(x));
+		buffer.push_back((uint8_t*)&z2, sizeof(z2));
+		buffer.push_back((uint8_t*)&z3, sizeof(z3));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		buffer.push_back((uint8_t*)&z4, sizeof(z4));
+		//100바이트
+		//buffer.push_back(123);
 		m_session_manager.SendAllSession(std::move(buffer));
 	}
+
+	//std::this_thread::sleep_for(std::chrono::microseconds(1));
 
 	return true;
 }
