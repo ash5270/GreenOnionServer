@@ -144,7 +144,7 @@ namespace greenonion::system
 			return m_capacity;
 		}
 
-		size_t GetSize() const
+		virtual int GetSize() const
 		{
 			return m_offset;
 		}
@@ -191,8 +191,8 @@ namespace greenonion::system
 	protected:
 		uint8_t* m_buffer;
 
-		size_t m_capacity;
-		size_t m_offset;
-		size_t m_readOffset;
+		int32_t m_capacity;
+		int32_t m_offset;
+		int32_t m_readOffset;
 	};
 } 

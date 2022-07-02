@@ -25,6 +25,9 @@
     <Filter Include="소스 파일\System\Buffer">
       <UniqueIdentifier>{be61d73f-2d45-4499-82f5-c308a4f618c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\System\Network\NetworkPacket">
+      <UniqueIdentifier>{e338f1a3-ff77-4a9e-948c-20b4db3a7176}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,6 +53,12 @@
     </ClCompile>
     <ClCompile Include="BufferPool.cpp">
       <Filter>소스 파일\System\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.h">
+      <Filter>소스 파일\System\Network\NetworkPacket</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginPacket.cpp">
+      <Filter>소스 파일\System\Network\NetworkPacket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +99,12 @@
       <Filter>소스 파일\System\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="NetWorkBuffer.h">
+      <Filter>소스 파일\System\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginPacket.h">
+      <Filter>소스 파일\System\Network\NetworkPacket</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializer.h">
       <Filter>소스 파일\System\Buffer</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,193 +1,131 @@
 ﻿#pragma once
 #include "CricularBuffer.h"
-#include <mutex>
 #include <atomic>
-
-
 
 namespace greenonion::system
 {
-	class NetWorkBuffer 
+	class NetWorkBuffer : public Buffer
 	{
 	public:
-		NetWorkBuffer() : m_buffer(new uint8_t[1024]),m_offset(0),m_readOffset(0),m_capacity(1024),m_writeOffset(0)
+		NetWorkBuffer() :Buffer(), m_writeOffset(0), m_readOffset(0), m_waterMark(m_capacity),m_size(0)
 		{
-			m_is_full = false;
-			m_lastOffset = 1024;
+
 		}
 
-		NetWorkBuffer(size_t size) : m_buffer(new uint8_t[size]), m_offset(0), m_readOffset(0), m_capacity(size), m_writeOffset(0), m_lastOffset(size)
+		NetWorkBuffer(size_t size) : Buffer(size), m_writeOffset(0), m_readOffset(0), m_waterMark(m_capacity),m_size(0)
 		{
-			m_is_full = false;
+
 		}
 
-		~NetWorkBuffer() 
+		~NetWorkBuffer() override
 		{
 
 		}
 
 	public:
-		uint8_t* GetBuffer() 
-		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			return m_buffer;
-		}
 
-		int32_t GetBufferSize()
+		int GetCurrentIndex()
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			return m_capacity;
-		}
-
-		int32_t GetSize()
-		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			return m_offset;
-		}
-
-		int32_t GetReadOffset()
-		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			return m_readOffset;
-		}
-
-		int32_t GetWriteOffset()
-		{
-			std::lock_guard<std::mutex> lock(m_mutex);
 			return m_writeOffset;
 		}
 
-
-		bool push_back(const uint8_t* data, const size_t& size) 
+		bool push_back(const uint8_t* data, const size_t& size) override
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			if (size < 0 || size + m_offset > m_capacity )
-			{
-				//GO_LOG(LOGLEVEL::LOG_DEBUG, "m_offset : ", (int)m_offset);
+			//사이즈가 0이랑 같거나 작으면 리턴
+			if (size <= 0)
 				return false;
-			}
-			//남아있는 사이즈 
-			const size_t remain_size = m_capacity - m_writeOffset;
-			//그냥 넣기
-			if (remain_size >= size)
+			const int remain_size = m_capacity - m_writeOffset;
+			//뒤에 공간이 안나올때 
+			if (remain_size < size)
 			{
-				memcpy_s(m_buffer + m_writeOffset, size, data, size);
-				m_writeOffset += size;
-				m_offset += size;
-			}
-			else
-			{
-				//뒤쪽에 남아있는 사이즈보다 들어온 사이즈가 클 경우
+				//앞쪽에 데이터 확인후 집어 넣어주기
 				if (m_readOffset > size)
 				{
-					m_lastOffset = m_writeOffset;
+					//여기서 넣어줘야함
+					m_waterMark.store(m_writeOffset);
 					memcpy_s(m_buffer, size, data, size);
 					m_writeOffset = size;
 				}
 				else
 				{
+					//아예 공간 자체가 없다.
+					printf("over size \n");
 					return false;
 				}
 			}
+			//공간이 나올때 
+			else
+			{
+				//여기서 데이터 넣어줌
+				//여기서 read offset이랑도 비교해서 넣기 없다면 false
+				if(m_readOffset> m_writeOffset)
+				{
+					const int read_sub_write = m_readOffset - m_writeOffset;
+					if (read_sub_write < size)
+					{
+						printf("over size2 \n");
+						return false;
+					}
+				}
 
-
+				memcpy_s(m_buffer+m_writeOffset, size, data, size);
+				m_writeOffset += size;
+			}
+			m_size += size;	
 			return true;
 		}
 
-		bool pop(uint8_t* data, const size_t& size) 
+		bool pop(uint8_t* data, const size_t& size) override
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
+			if (m_size <= 0)
+				return  false;
 
-			if (size <= 0 || m_offset <= 0)
-				return false;
-			//그냥 읽기
-			const size_t remain_size = m_capacity - m_readOffset;
-			if (remain_size >= size)
+			if(m_readOffset <= m_writeOffset)
 			{
 				memcpy_s(data, size, m_buffer + m_readOffset, size);
 				m_readOffset += size;
-			}
-			//넘어가는 데이터 구해오기
-			else
-			{
-				//남아있는 사이즈보다 사이즈가 큰걸 읽을라고 할경우
-				if (m_writeOffset > size)
+				m_size -= size;
+				if(m_readOffset>=m_waterMark)
 				{
-					memcpy_s(data, size, m_buffer, size);
-					m_readOffset = size;
+					m_readOffset = 0;
+					m_waterMark = m_capacity;
 				}
-				else
-				{
-					return false;
-				}
+
+				return true;
 			}
-			m_offset -= size;
-			if (m_offset < 0)
-			{
-				printf("sc");
-			}
-			return true;
+
+			return  false;
 		}
 
-		bool pop_size(const size_t& size)
+		void skip_pop(const size_t& size)
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			if (size <= 0 || m_offset <= 0)
-				return false;
-
-			const size_t remain_size = m_capacity - m_readOffset;
-
-			if(m_readOffset+size >= m_lastOffset)
+			m_readOffset += size;
+			m_size -= size;
+			if (m_readOffset >= m_waterMark)
 			{
 				m_readOffset = 0;
-			}else
-			{
-				if (remain_size >= size)
-				{
-					m_readOffset += size;
-				}
-				else
-				{
-					m_readOffset = size;
-				}
+				m_waterMark = m_capacity;
 			}
-			m_offset -= size;
-			if (m_offset < 0)
-			{
-				printf("buffer size : %d ,read : %d ,write : %d , send_size : %llu \n",m_offset,m_readOffset,m_writeOffset,size);
-			}
-			return true;
 		}
 
-		bool GetCurrentIndex(size_t& data, const size_t& size) const
+		int GetSize() const override 
 		{
-			if (m_capacity < size + m_offset)
-				return false;
-			//인덱스만 들고 있어도 되니깐 인덱스만 가지고 있음
-			data = m_writeOffset;
-			return true;
+			return m_size.load();
 		}
 
-		void SetSize(size_t size)
+		int RemainSize()const
 		{
-			
+			return m_capacity - m_size.load();
 		}
-		int32_t m_lastOffset;
 
+	public:
+		std::atomic_int32_t m_readOffset;
+		std::atomic_int32_t m_writeOffset;
+		std::atomic_int32_t m_waterMark;
 
-	private:
-		std::mutex m_mutex;
-		bool m_is_full;
+		std::atomic_int32_t m_size;
+		//예약을 하고 거기 위치에 있는 포인터에서 꺼내와 씀
 
-		uint8_t* m_buffer;
-
-
-		int32_t m_capacity;
-		int32_t m_writeOffset;
-		int32_t m_readOffset;
-		int32_t m_offset;
-
-		//보낼만큼의 사이즈 
 	};
 }
 

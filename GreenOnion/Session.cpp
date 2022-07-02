@@ -2,7 +2,8 @@
 #include"SessionManager.h"
 
 #include<boost/bind.hpp>
-
+#include"Packet.h"
+#include"LoginPacket.h"
 
 greenonion::system::network::Session::Session( boost::asio::io_context& context, asio::ip::tcp::socket socket):
 	m_context(context), m_socket(std::move(socket))
@@ -63,7 +64,7 @@ void greenonion::system::network::Session::DisConnect()
 
 void greenonion::system::network::Session::RecvData()
 {
-	m_socket.async_receive(boost::asio::buffer(read_buffer->GetBuffer(), read_buffer->GetBufferSize()), 0,
+	m_socket.async_receive(boost::asio::buffer(read_buffer->GetBuffer()+read_buffer->m_writeOffset, read_buffer->RemainSize()), 0,
 		boost::bind(&Session::RecvHandler, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
@@ -71,15 +72,24 @@ void greenonion::system::network::Session::RecvHandler(boost::system::error_code
 {
 	if(!ec)
 	{
-		if(transferred<0)
+		if(transferred<=0)
 		{
 			return;
 		}
 		else
 		{
-			//GO_LOG(LOGLEVEL::LOG_DEBUG, "Receive success");
-		}
+			read_buffer->m_writeOffset += transferred;
+			read_buffer->m_size += transferred;
+			using namespace network::packet;
+			HeaderSerializer serializer;
+			PacketHeader header;
+			serializer.DeSerialize(read_buffer, header);
+			LoginPacket* login_packet = new LoginPacket(transferred);
 
+
+
+			GO_LOG(LOGLEVEL::LOG_DEBUG, "Receive success ", "header iD : ",(uint16_t)header.ID, "   header Size : ", header.Size);
+		}
 		RecvData();
 	}else
 	{
@@ -87,31 +97,21 @@ void greenonion::system::network::Session::RecvHandler(boost::system::error_code
 	}
 }
 
-
 //보내는 중이라면 그냥 버퍼에 쓰기만 하고 넘겨주기
 //보내고 있지 않다면 바로 보내기
-//
-//
-
 void greenonion::system::network::Session::Send(Buffer&& buffer)
 {
 	size_t size = 0;
 	//현재 넣어던 주소 -> index //
-	send_buffer->GetCurrentIndex(size, buffer.GetSize());
+	size=send_buffer->GetCurrentIndex();
 	send_buffer->push_back(buffer.GetBuffer(), buffer.GetSize());
-	//GO_LOG(LOGLEVEL::LOG_DEBUG, "buffer  size: ", (int)buffer.GetSize());
-	//
-	if(true)
+	if(!m_is_send)
 	{
-		//GO_LOG(LOGLEVEL::LOG_DEBUG, "Write offset : ", (int)send_buffer->GetWriteOffset());
 		Send(size, buffer.GetSize());
-		
 	}else
 	{
 		
 	}
-
-	
 }
 
 void greenonion::system::network::Session::Send(const size_t& index, const size_t& size)
@@ -138,36 +138,22 @@ void greenonion::system::network::Session::SendData(const size_t& index, const s
 void greenonion::system::network::Session::SendHandler(boost::system::error_code ec, size_t transferred)
 {
 	if(!ec)
-	{
+	{ 
 		m_is_send = false;
 		size_t x;
+		
 		//버퍼
-		GO_LOG(LOGLEVEL::LOG_DEBUG, "1 read offset : ", (int)send_buffer->GetReadOffset(), ", write offset : ", (int)send_buffer->GetWriteOffset(), ", send_size : ", send_buffer->GetSize());
-		send_buffer->pop_size( transferred);
-		GO_LOG(LOGLEVEL::LOG_DEBUG, "2 read offset : ", (int)send_buffer->GetReadOffset(), ", write offset : ", (int)send_buffer->GetWriteOffset(), ", send_size : ", send_buffer->GetSize());
-
-		//GO_LOG(LOGLEVEL::LOG_DEBUG, "read offset : ", (int)send_buffer->GetReadOffset(), ", write offset : ", (int)send_buffer->GetWriteOffset(),", buffer size : ", send_buffer->GetSize());
-
-		/*if (send_buffer->GetReadOffset() != send_buffer->GetWriteOffset())
+		//GO_LOG(LOGLEVEL::LOG_DEBUG, "transferred ", transferred , "currnet index : " , send_buffer->m_writeOffset.load(), " read index : ",send_buffer->m_readOffset.load() );
+		send_buffer->skip_pop( transferred);
+		if(send_buffer->m_size>0)
 		{
-			if(send_buffer->GetReadOffset()< send_buffer->GetWriteOffset())
-			{
-				size_t size = send_buffer->GetWriteOffset() - send_buffer->GetReadOffset();
-				SendData(send_buffer->GetReadOffset(), size);
-				GO_LOG(LOGLEVEL::LOG_DEBUG, "read offset : ", (int)send_buffer->GetReadOffset(), ", write offset : ", (int)send_buffer->GetWriteOffset(), ", send_size : ", (uint32_t)size);
-
-			}else
-			{
-				size_t size = send_buffer->m_lastOffset - send_buffer->GetReadOffset();
-				SendData(send_buffer->GetReadOffset(), size);
-				GO_LOG(LOGLEVEL::LOG_DEBUG, "  111read offset : ", (int)send_buffer->GetReadOffset(), ", write offset : ", (int)send_buffer->GetWriteOffset(), ", send_size : ", (uint32_t)size);
-
-			}
-			
-		}*/
+			GO_LOG(LOGLEVEL::LOG_DEBUG, "buffer size", send_buffer->m_size.load());
+			Send(send_buffer->m_readOffset, send_buffer->m_size);
+			//여기가 문제 어떻게 마지막 까지 보낼까 고민해야할듯
+		}
 	}
 	else
 	{
-		
+		GO_LOG(LOGLEVEL::LOG_DEBUG, "transferred ", transferred, "currnet index", send_buffer->GetCurrentIndex());
 	}
 }
